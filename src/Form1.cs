@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WK.Libraries.SharpClipboardNS;
 
 /*
 Dispatcher.CurrentDispatcher.InvokeAsync(() =>
@@ -107,18 +109,18 @@ namespace IsPasswordPwned
         {
             Info();
             Calc();
+            if (labResult.Text != "Results") ShowResults(labResult, "Results");
+            if (lbApiSha1.Items.Count != 0) lbApiSha1.Items.Clear();
+            if (lbApiNtlm.Items.Count != 0) lbApiNtlm.Items.Clear();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
         {
             tbPassword_TextChanged(null, null);
-            ShowResults(labResult, "Results");
         }
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            ShowResults(labResult, "Wait...");
-
             UpdateStatus(_tasks.Length);
 
             foreach (ApiTaskItem task in _tasks)
@@ -168,20 +170,44 @@ namespace IsPasswordPwned
             else
             {
                 lab.Text = text;
+                string title = string.Empty;
+                string message = string.Empty;
+                string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                string iconFile = "icon-error-red-cross.png";
+
                 if (text.StartsWith("Good news"))
                 {
                     lab.BackColor = Color.LightGreen;
                     lab.ForeColor = Color.Black;
+                    title = lines[0];
+                    message = lines[1];
+                    iconFile = "icon-ok-green.png";
                 }
                 else if (text.StartsWith("Oh no"))
                 {
                     lab.BackColor = Color.Red;
                     lab.ForeColor = Color.Yellow;
+                    title = lines[0];
+                    message = lines[1];
+                    iconFile = "icon-warning-red.png";
                 }
                 else
                 {
+                    if (text.StartsWith("Unable to get data"))
+                    {
+                        title = text;
+                    }
                     lab.BackColor = SystemColors.Control;
                     lab.ForeColor = SystemColors.ControlText;
+                }
+
+                if (this.WindowState == FormWindowState.Minimized || Window.IsOverlapped(this))
+                {
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        string uri = Path.Combine(_exe_dir, iconFile);
+                        new ToastContentBuilder().AddText(title).AddText(message).AddAppLogoOverride(new Uri(uri)).Show();
+                    }
                 }
             }
         }
@@ -305,6 +331,26 @@ namespace IsPasswordPwned
                 e.SuppressKeyPress = true; // disable beep
                 if (btnCheck.Enabled) btnCheck_Click(null, null);
             }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                e.SuppressKeyPress = true;
+                tbPassword.Text = string.Empty;
+            }
         }
+
+        private void sharpClipboard1_ClipboardChanged(object sender, SharpClipboard.ClipboardChangedEventArgs e)
+        {
+            if (e.ContentType == SharpClipboard.ContentTypes.Text)
+            {
+                tbPassword.Text = sharpClipboard1.ClipboardText;
+                if (btnCheck.Enabled) btnCheck_Click(null, null);
+            }
+        }
+
+        private void chkClipboard_CheckedChanged(object sender, EventArgs e)
+        {
+            sharpClipboard1.MonitorClipboard = chkClipboard.Checked;
+        }
+
     }
 }

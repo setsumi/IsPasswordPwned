@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,6 +43,9 @@
             this.tbApiNtlm = new System.Windows.Forms.TextBox();
             this.btnCheck = new System.Windows.Forms.Button();
             this.labResult = new System.Windows.Forms.Label();
+            this.sharpClipboard1 = new WK.Libraries.SharpClipboardNS.SharpClipboard(this.components);
+            this.chkClipboard = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // tbPassword
@@ -53,6 +57,7 @@
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(559, 22);
             this.tbPassword.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.tbPassword, "Esc - clear password");
             this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
             this.tbPassword.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbPassword_KeyDown);
             // 
@@ -180,11 +185,37 @@
     " it anywhere before, change it!";
             this.labResult.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // sharpClipboard1
+            // 
+            this.sharpClipboard1.MonitorClipboard = false;
+            this.sharpClipboard1.ObservableFormats.All = true;
+            this.sharpClipboard1.ObservableFormats.Files = true;
+            this.sharpClipboard1.ObservableFormats.Images = true;
+            this.sharpClipboard1.ObservableFormats.Others = true;
+            this.sharpClipboard1.ObservableFormats.Texts = true;
+            this.sharpClipboard1.ObserveLastEntry = true;
+            this.sharpClipboard1.Tag = null;
+            this.sharpClipboard1.ClipboardChanged += new System.EventHandler<WK.Libraries.SharpClipboardNS.SharpClipboard.ClipboardChangedEventArgs>(this.sharpClipboard1_ClipboardChanged);
+            // 
+            // chkClipboard
+            // 
+            this.chkClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkClipboard.AutoSize = true;
+            this.chkClipboard.Location = new System.Drawing.Point(461, 11);
+            this.chkClipboard.Name = "chkClipboard";
+            this.chkClipboard.Size = new System.Drawing.Size(111, 17);
+            this.chkClipboard.TabIndex = 13;
+            this.chkClipboard.Text = " Monitor Clipboard";
+            this.toolTip1.SetToolTip(this.chkClipboard, "If window is not visible shows Windows notification");
+            this.chkClipboard.UseVisualStyleBackColor = true;
+            this.chkClipboard.CheckedChanged += new System.EventHandler(this.chkClipboard_CheckedChanged);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(672, 427);
+            this.Controls.Add(this.chkClipboard);
             this.Controls.Add(this.labResult);
             this.Controls.Add(this.btnCheck);
             this.Controls.Add(this.lbApiNtlm);
@@ -222,6 +253,9 @@
         private System.Windows.Forms.TextBox tbApiNtlm;
         private System.Windows.Forms.Button btnCheck;
         private System.Windows.Forms.Label labResult;
+        private WK.Libraries.SharpClipboardNS.SharpClipboard sharpClipboard1;
+        private System.Windows.Forms.CheckBox chkClipboard;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
